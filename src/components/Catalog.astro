@@ -142,7 +142,10 @@ import ShoppingListModal from "./ShoppingListModal.astro";
 
     <div class="p-6 flex flex-col gap-3">
       <div class="flex items-center justify-between">
-        <div id="modal-cat" class="text-[11px] uppercase font-semibold text-primary tracking-wide"></div>
+        <div class="flex items-center gap-2">
+          <div id="modal-cat" class="text-[11px] uppercase font-semibold text-primary tracking-wide"></div>
+          <span id="modal-upc-badge" class="hidden text-[11px] font-mono text-ink-soft bg-bg border border-border px-2 py-0.5 rounded"></span>
+        </div>
         <button id="modal-share-btn" class="text-xs text-ink-soft hover:text-ink flex items-center gap-1 font-medium bg-bg border border-border px-2.5 py-1 rounded-md transition-colors">
           <Icon name="share" class="w-3.5 h-3.5" />
           <span>Share Item</span>
@@ -393,6 +396,15 @@ import ShoppingListModal from "./ShoppingListModal.astro";
       modalNoImg.classList.add("flex");
     }
     modalCat.textContent = item.category || "General";
+    const modalUpcBadge = document.getElementById("modal-upc-badge");
+    if (modalUpcBadge) {
+      if (item.upc) {
+        modalUpcBadge.textContent = "UPC: " + item.upc;
+        modalUpcBadge.classList.remove("hidden");
+      } else {
+        modalUpcBadge.classList.add("hidden");
+      }
+    }
     modalName.textContent = item.name || "";
     modalDesc.textContent = item.description || "";
     modalDesc.style.display = item.description ? "block" : "none";
