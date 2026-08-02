@@ -1,0 +1,71 @@
+---
+import { STORE } from "../config";
+---
+
+<section id="inquiry" class="max-w-6xl mx-auto px-6 mt-16 pb-6">
+  <div class="bg-surface border border-border rounded-xl p-8 grid grid-cols-1 md:grid-cols-[0.9fr_1.3fr] gap-8">
+    <div>
+      <h2 class="font-display text-2xl font-bold text-ink mt-0">Talk to us</h2>
+      <p class="text-ink-soft text-[0.95rem] leading-relaxed">
+        Looking for something specific? Found an issue? Tell us — we read every message.
+      </p>
+      <ul class="list-none p-0 mt-5 flex flex-col gap-2.5">
+        <li class="flex gap-2.5 items-baseline text-sm text-ink-soft">
+          <span class="text-primary font-semibold text-xs uppercase tracking-wide w-24 shrink-0">Inquiry</span> Ask if we carry or can order an item
+        </li>
+        <li class="flex gap-2.5 items-baseline text-sm text-ink-soft">
+          <span class="text-primary font-semibold text-xs uppercase tracking-wide w-24 shrink-0">Feedback</span> Tell us how we're doing
+        </li>
+        <li class="flex gap-2.5 items-baseline text-sm text-ink-soft">
+          <span class="text-primary font-semibold text-xs uppercase tracking-wide w-24 shrink-0">Suggestion</span> Request items to stock
+        </li>
+        <li class="flex gap-2.5 items-baseline text-sm text-ink-soft">
+          <span class="text-primary font-semibold text-xs uppercase tracking-wide w-24 shrink-0">Complaint</span> Let us know what went wrong
+        </li>
+      </ul>
+
+      <div class="mt-7 pt-6 border-t border-border flex flex-col gap-3">
+        <div class="rounded-lg overflow-hidden border border-border">
+          <iframe
+            src={STORE.mapEmbedSrc}
+            width="100%"
+            height="160"
+            style="border:0; display:block;"
+            loading="lazy"
+            title="Store location map"
+          ></iframe>
+        </div>
+        <a
+          href={STORE.mapDirectionsUrl}
+          target="_blank"
+          rel="noopener"
+          class="text-sm font-semibold text-primary hover:underline"
+        >
+          Get directions →
+        </a>
+        {
+          STORE.phone && (
+            <a
+              href={`tel:${STORE.phone.replace(/[^0-9+]/g, "")}`}
+              class="text-sm font-semibold text-primary hover:underline"
+            >
+              Call {STORE.phone}
+            </a>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="bg-bg rounded-lg overflow-hidden border border-border">
+      <iframe
+        src={STORE.formEmbedUrl}
+        width="100%"
+        height="800"
+        style="border:0; display:block;"
+        title="Store inquiry and feedback form"
+      >
+        Loading form…
+      </iframe>
+    </div>
+  </div>
+</section>

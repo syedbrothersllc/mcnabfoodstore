@@ -1,0 +1,436 @@
+---
+import { STORE } from "../config";
+import Icon from "./Icon.astro";
+---
+
+<nav
+  id="cat-bar"
+  class="sticky top-0 z-20 bg-surface border-b border-border overflow-x-auto whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden shadow-sm"
+>
+  <div id="cat-bar-inner" class="max-w-6xl mx-auto px-6 py-2.5 flex gap-2">
+    <button
+      class="cat-chip font-medium text-sm px-3.5 py-2 rounded-md border border-primary bg-primary text-white transition-colors min-h-10"
+      data-cat="all">All Items</button
+    >
+  </div>
+</nav>
+
+<div class="max-w-6xl mx-auto px-6 mt-6 flex flex-wrap items-center gap-3">
+  <div class="relative flex-1 min-w-[240px]">
+    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none">
+      <Icon name="search" class="w-4 h-4" />
+    </span>
+    <input
+      id="search-input"
+      type="text"
+      placeholder="Search by name, category, or UPC…"
+      class="w-full pl-10 pr-10 py-3 border border-border rounded-md bg-surface font-body text-base text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary min-h-11"
+    />
+    <button
+      id="search-clear"
+      aria-label="Clear search"
+      class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-soft hover:text-ink w-7 h-7 flex items-center justify-center rounded-full hover:bg-bg transition-colors"
+    >
+      <Icon name="x" class="w-4 h-4" />
+    </button>
+  </div>
+  <select
+    id="sort-select"
+    class="px-3 py-3 border border-border rounded-md bg-surface font-body text-sm font-medium text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary min-h-11"
+  >
+    <option value="default">Sort: Featured</option>
+    <option value="name-asc">Name: A → Z</option>
+    <option value="name-desc">Name: Z → A</option>
+    <option value="price-asc">Price: Low → High</option>
+    <option value="price-desc">Price: High → Low</option>
+  </select>
+  <span id="results-count" class="text-sm text-ink-soft font-medium whitespace-nowrap">Loading…</span>
+</div>
+
+<main class="max-w-6xl mx-auto px-6">
+  <div id="catalog" class="mt-6">
+    <div id="skeleton-grid" class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
+      {
+        Array.from({ length: 8 }).map(() => (
+          <div class="skeleton bg-surface border border-border rounded-lg overflow-hidden">
+            <div class="aspect-[4/3] bg-ink/5" />
+            <div class="p-3.5 space-y-2">
+              <div class="h-2.5 w-1/3 bg-ink/10 rounded" />
+              <div class="h-4 w-2/3 bg-ink/10 rounded" />
+              <div class="h-3 w-full bg-ink/10 rounded" />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <div id="pagination" class="flex justify-center items-center gap-2 my-10 flex-wrap"></div>
+</main>
+
+<button
+  id="back-to-top"
+  aria-label="Back to top"
+  class="fixed bottom-6 right-6 z-30 bg-navy text-white w-12 h-12 rounded-full shadow-lg items-center justify-center text-lg font-bold hidden hover:bg-primary-dark transition-colors"
+>
+  ↑
+</button>
+
+<!-- Item detail modal -->
+<div
+  id="item-modal-backdrop"
+  class="hidden fixed inset-0 bg-black/50 z-40 items-center justify-center p-4"
+>
+  <div
+    id="item-modal"
+    class="bg-surface rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
+  >
+    <button
+      id="modal-close"
+      aria-label="Close"
+      class="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-surface/90 border border-border flex items-center justify-center text-ink-soft hover:text-ink hover:bg-bg transition-colors"
+    >
+      <Icon name="x" class="w-5 h-5" />
+    </button>
+    <div id="modal-img-wrap" class="aspect-[4/3] bg-bg overflow-hidden border-b border-border">
+      <img id="modal-img" src="" alt="" class="w-full h-full object-cover hidden" />
+      <div id="modal-no-img" class="hidden w-full h-full items-center justify-center text-ink-soft text-sm">
+        No photo available
+      </div>
+    </div>
+    <div class="p-6 flex flex-col gap-2.5">
+      <div id="modal-cat" class="text-[11px] uppercase font-semibold text-ink-soft tracking-wide"></div>
+      <div id="modal-name" class="font-display text-xl font-bold text-ink leading-snug"></div>
+      <div id="modal-desc" class="text-ink-soft text-sm leading-relaxed"></div>
+      <div class="flex items-center justify-between mt-2">
+        <span id="modal-price" class="font-display font-bold text-ink text-2xl"></span>
+        <span id="modal-stock" class="text-xs font-semibold px-2.5 py-1 rounded"></span>
+      </div>
+      <a
+        href="#inquiry"
+        id="modal-inquire"
+        class="mt-3 inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white font-semibold px-5 py-3 rounded-md no-underline transition-colors min-h-11"
+      >
+        Inquire About This Item
+      </a>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ ITEMS_API_URL: STORE.itemsApiUrl }}>
+  let allItems = [];
+  let activeCategory = "all";
+  let searchTerm = "";
+  let sortMode = "default";
+  let currentPage = 1;
+  const itemsPerPage = 24;
+  let searchDebounceTimer = null;
+
+  function stockClass(stock) {
+    const s = (stock || "").toLowerCase();
+    if (s.includes("out")) return "bg-danger-soft text-danger";
+    if (s.includes("low")) return "bg-warning-soft text-warning";
+    return "bg-success-soft text-success";
+  }
+
+  function isOutOfStock(stock) {
+    return (stock || "").toLowerCase().includes("out");
+  }
+
+  function money(price) {
+    if (price === "" || price === undefined || price === null) return "";
+    const n = Number(String(price).replace(/[^0-9.]/g, ""));
+    return isNaN(n) ? String(price) : "$" + n.toFixed(2);
+  }
+
+  function escapeHtml(str) {
+    return String(str || "").replace(
+      /[&<>"']/g,
+      (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[m]
+    );
+  }
+
+  /* ---------------- Item detail modal ---------------- */
+  const modalBackdrop = document.getElementById("item-modal-backdrop");
+  const modalImg = document.getElementById("modal-img");
+  const modalNoImg = document.getElementById("modal-no-img");
+  const modalCat = document.getElementById("modal-cat");
+  const modalName = document.getElementById("modal-name");
+  const modalDesc = document.getElementById("modal-desc");
+  const modalPrice = document.getElementById("modal-price");
+  const modalStock = document.getElementById("modal-stock");
+
+  function openModal(item) {
+    if (item.image) {
+      modalImg.src = item.image;
+      modalImg.alt = item.name || "Item photo";
+      modalImg.classList.remove("hidden");
+      modalNoImg.classList.add("hidden");
+    } else {
+      modalImg.classList.add("hidden");
+      modalNoImg.classList.remove("hidden");
+      modalNoImg.classList.add("flex");
+    }
+    modalCat.textContent = item.category || "General";
+    modalName.textContent = item.name || "";
+    modalDesc.textContent = item.description || "";
+    modalDesc.style.display = item.description ? "block" : "none";
+    modalPrice.textContent = item.price ? money(item.price) : "";
+    modalStock.textContent = item.stock || "In Stock";
+    modalStock.className = "text-xs font-semibold px-2.5 py-1 rounded " + stockClass(item.stock);
+
+    modalBackdrop.classList.remove("hidden");
+    modalBackdrop.classList.add("flex");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal() {
+    modalBackdrop.classList.add("hidden");
+    modalBackdrop.classList.remove("flex");
+    document.body.style.overflow = "";
+  }
+
+  document.getElementById("modal-close").addEventListener("click", closeModal);
+  modalBackdrop.addEventListener("click", (e) => {
+    if (e.target === modalBackdrop) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
+  });
+  document.getElementById("modal-inquire").addEventListener("click", closeModal);
+
+  /* ---------------- Category chips ---------------- */
+  function renderCategoryChips() {
+    const counts = {};
+    allItems.forEach((i) => {
+      const c = i.category || "Other";
+      counts[c] = (counts[c] || 0) + 1;
+    });
+    const cats = ["all", ...Object.keys(counts)];
+    const inner = document.getElementById("cat-bar-inner");
+    inner.innerHTML = "";
+    cats.forEach((cat) => {
+      const btn = document.createElement("button");
+      const isActive = cat === activeCategory;
+      btn.className =
+        "cat-chip font-medium text-sm px-3.5 py-2 rounded-md border transition-colors min-h-10 " +
+        (isActive
+          ? "bg-primary text-white border-primary"
+          : "bg-surface text-ink-soft border-border hover:border-primary hover:text-primary");
+      const countLabel = cat === "all" ? allItems.length : counts[cat];
+      btn.textContent = `${cat === "all" ? "All Items" : cat} (${countLabel})`;
+      btn.addEventListener("click", () => {
+        activeCategory = cat;
+        currentPage = 1;
+        renderCategoryChips();
+        renderCatalog();
+      });
+      inner.appendChild(btn);
+    });
+  }
+
+  function applySort(items) {
+    const sorted = [...items];
+    if (sortMode === "name-asc") sorted.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+    if (sortMode === "name-desc") sorted.sort((a, b) => (b.name || "").localeCompare(a.name || ""));
+    if (sortMode === "price-asc")
+      sorted.sort((a, b) => (parseFloat(a.price) || 0) - (parseFloat(b.price) || 0));
+    if (sortMode === "price-desc")
+      sorted.sort((a, b) => (parseFloat(b.price) || 0) - (parseFloat(a.price) || 0));
+    return sorted;
+  }
+
+  function renderPagination(totalItems) {
+    const pagEl = document.getElementById("pagination");
+    pagEl.innerHTML = "";
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    if (totalPages <= 1) return;
+
+    const btnClass =
+      "px-4 py-2.5 border border-border rounded-md bg-surface font-medium text-sm text-ink-soft hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:text-ink-soft transition-colors min-h-11 min-w-11";
+
+    const prevBtn = document.createElement("button");
+    prevBtn.className = btnClass;
+    prevBtn.textContent = "← Prev";
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => {
+      currentPage--;
+      renderCatalog();
+      window.scrollTo({ top: 200, behavior: "smooth" });
+    };
+    pagEl.appendChild(prevBtn);
+
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+    for (let i = startPage; i <= endPage; i++) {
+      const btn = document.createElement("button");
+      const isActive = i === currentPage;
+      btn.className =
+        btnClass.replace("text-ink-soft", isActive ? "text-white" : "text-ink-soft") +
+        (isActive ? " bg-primary border-primary text-white" : "");
+      btn.textContent = String(i);
+      btn.onclick = () => {
+        currentPage = i;
+        renderCatalog();
+        window.scrollTo({ top: 200, behavior: "smooth" });
+      };
+      pagEl.appendChild(btn);
+    }
+
+    const nextBtn = document.createElement("button");
+    nextBtn.className = btnClass;
+    nextBtn.textContent = "Next →";
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => {
+      currentPage++;
+      renderCatalog();
+      window.scrollTo({ top: 200, behavior: "smooth" });
+    };
+    pagEl.appendChild(nextBtn);
+  }
+
+  function renderCatalog() {
+    const container = document.getElementById("catalog");
+    let items = allItems;
+
+    if (activeCategory !== "all") {
+      items = items.filter((i) => (i.category || "Other") === activeCategory);
+    }
+    if (searchTerm) {
+      const t = searchTerm.toLowerCase();
+      items = items.filter(
+        (i) =>
+          (i.name || "").toLowerCase().includes(t) ||
+          (i.description || "").toLowerCase().includes(t) ||
+          (i.category || "").toLowerCase().includes(t) ||
+          (i.upc || "").toLowerCase().includes(t)
+      );
+    }
+    items = applySort(items);
+
+    document.getElementById("results-count").textContent = `${items.length.toLocaleString()} items`;
+
+    if (items.length === 0) {
+      container.innerHTML =
+        '<div class="text-center py-16 text-ink-soft text-lg">No items match your search. Try a different term or category.</div>';
+      document.getElementById("pagination").innerHTML = "";
+      return;
+    }
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedItems = items.slice(startIndex, startIndex + itemsPerPage);
+
+    const grid = document.createElement("div");
+    grid.className = "grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4";
+
+    paginatedItems.forEach((item) => {
+      const outOfStock = isOutOfStock(item.stock);
+      const card = document.createElement("div");
+      card.className =
+        "bg-surface border border-border rounded-lg overflow-hidden flex flex-col transition-shadow hover:shadow-md cursor-pointer" +
+        (outOfStock ? " opacity-60" : "");
+      card.setAttribute("role", "button");
+      card.setAttribute("tabindex", "0");
+      card.addEventListener("click", () => openModal(item));
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openModal(item);
+        }
+      });
+
+      const imgWrap = document.createElement("div");
+      imgWrap.className = "aspect-[4/3] bg-bg relative overflow-hidden border-b border-border";
+      if (item.image) {
+        const img = document.createElement("img");
+        img.src = item.image;
+        img.alt = item.name || "Item photo";
+        img.loading = "lazy";
+        img.className = "w-full h-full object-cover block";
+        imgWrap.appendChild(img);
+      } else {
+        imgWrap.classList.add("flex", "items-center", "justify-center", "text-ink-soft", "text-xs");
+        imgWrap.textContent = "No photo available";
+      }
+      card.appendChild(imgWrap);
+
+      const body = document.createElement("div");
+      body.className = "p-3.5 flex flex-col gap-1.5 flex-1";
+      body.innerHTML = `
+        <div class="text-[10px] uppercase font-semibold text-ink-soft tracking-wide">${escapeHtml(item.category || "General")}</div>
+        <div class="font-display text-[0.95rem] font-semibold leading-snug text-ink">${escapeHtml(item.name)}</div>
+        ${item.description ? `<div class="text-ink-soft text-[13px] leading-snug line-clamp-2">${escapeHtml(item.description)}</div>` : ""}
+        <div class="flex items-center justify-between mt-auto pt-1.5">
+          ${item.price ? `<span class="font-display font-bold text-ink text-base">${money(item.price)}</span>` : "<span></span>"}
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded ${stockClass(item.stock)}">${escapeHtml(item.stock || "In Stock")}</span>
+        </div>
+      `;
+      card.appendChild(body);
+      grid.appendChild(card);
+    });
+
+    container.innerHTML = "";
+    container.appendChild(grid);
+    renderPagination(items.length);
+  }
+
+  async function loadItems() {
+    const container = document.getElementById("catalog");
+    try {
+      const res = await fetch(ITEMS_API_URL);
+      if (!res.ok) throw new Error("Bad response: " + res.status);
+      const data = await res.json();
+      allItems = data.items || [];
+      if (allItems.length === 0) {
+        container.innerHTML =
+          '<div class="text-center py-16 text-ink-soft text-lg">No items in stock right now — check back soon.</div>';
+        document.getElementById("results-count").textContent = "0 items";
+        return;
+      }
+      renderCategoryChips();
+      renderCatalog();
+    } catch (err) {
+      container.innerHTML =
+        '<div class="text-center py-16 text-ink-soft text-lg">Couldn\'t load items right now. Please refresh, or contact us below.</div>';
+      document.getElementById("results-count").textContent = "";
+      console.error(err);
+    }
+  }
+
+  /* ---------------- Search (debounced, with clear button) ---------------- */
+  const searchInput = document.getElementById("search-input");
+  const searchClear = document.getElementById("search-clear");
+
+  function setSearchTerm(value) {
+    searchTerm = value;
+    currentPage = 1;
+    searchClear.classList.toggle("hidden", !value);
+    renderCatalog();
+  }
+
+  searchInput.addEventListener("input", (e) => {
+    const value = e.target.value;
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => setSearchTerm(value), 200);
+  });
+
+  searchClear.addEventListener("click", () => {
+    searchInput.value = "";
+    setSearchTerm("");
+    searchInput.focus();
+  });
+
+  document.getElementById("sort-select").addEventListener("change", (e) => {
+    sortMode = e.target.value;
+    currentPage = 1;
+    renderCatalog();
+  });
+
+  const backToTop = document.getElementById("back-to-top");
+  window.addEventListener("scroll", () => {
+    backToTop.style.display = window.scrollY > 500 ? "flex" : "none";
+  });
+  backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+
+  loadItems();
+</script>

@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #F6F7F9;
+  --color-surface: #FFFFFF;
+  --color-border: #E3E6EB;
+  --color-ink: #111827;
+  --color-ink-soft: #5B6472;
+  --color-navy: #0F1B2D;
+  --color-primary: #155EEF;
+  --color-primary-dark: #0E3FA6;
+  --color-danger: #DC2626;
+  --color-danger-soft: #FDECEC;
+  --color-success: #16A34A;
+  --color-success-soft: #E9F7EF;
+  --color-warning: #D97706;
+  --color-warning-soft: #FDF3E3;
+
+  --font-display: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.skeleton {
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}

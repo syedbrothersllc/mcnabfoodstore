@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0F1B2D"/>
+  <rect x="0" y="0" width="1200" height="10" fill="#155EEF"/>
+  <text x="80" y="300" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="72" fill="#FFFFFF">McNab Food Store</text>
+  <text x="80" y="360" font-family="Arial, Helvetica, sans-serif" font-weight="500" font-size="32" fill="#9CA7B8">Your neighborhood stop for snacks, drinks &amp; essentials</text>
+  <text x="80" y="420" font-family="Arial, Helvetica, sans-serif" font-weight="500" font-size="26" fill="#155EEF">8013 W McNab Rd, Tamarac, FL 33321</text>
+</svg>

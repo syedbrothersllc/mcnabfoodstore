@@ -1,0 +1,83 @@
+---
+import { STORE } from "../config";
+import Icon from "./Icon.astro";
+---
+
+<header class="bg-surface border-b border-border">
+  <!-- Utility bar -->
+  <div class="bg-navy text-white text-xs">
+    <div class="max-w-6xl mx-auto px-6 py-2 flex flex-wrap justify-between items-center gap-2">
+      <a
+        href={STORE.mapDirectionsUrl}
+        target="_blank"
+        rel="noopener"
+        class="flex items-center gap-1.5 text-white/80 hover:text-white transition-colors no-underline"
+      >
+        <Icon name="mapPin" class="w-3.5 h-3.5 shrink-0" />
+        <span>{STORE.address}</span>
+      </a>
+      <div class="flex items-center gap-4">
+        {
+          STORE.phone && (
+            <a
+              href={`tel:${STORE.phone.replace(/[^0-9+]/g, "")}`}
+              class="flex items-center gap-1.5 text-white/80 hover:text-white transition-colors no-underline"
+            >
+              <Icon name="phone" class="w-3.5 h-3.5 shrink-0" />
+              <span>{STORE.phone}</span>
+            </a>
+          )
+        }
+        <span class="text-white/80">{STORE.hoursText}</span>
+        <span id="open-badge" class="flex items-center gap-1.5 text-[11px] font-semibold">
+          <span id="open-dot" class="w-2 h-2 rounded-full bg-white/40"></span>
+          <span id="open-label">Checking hours…</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main header -->
+  <div class="max-w-6xl mx-auto px-6 py-5 flex flex-wrap justify-between items-center gap-4">
+    <div>
+      <h1 class="font-display font-extrabold text-ink text-[clamp(1.5rem,3vw,2rem)] leading-tight m-0 tracking-tight">
+        {STORE.name}
+      </h1>
+      <p class="text-ink-soft text-sm mt-0.5">{STORE.tagline}</p>
+    </div>
+    <a
+      href="#inquiry"
+      class="bg-primary hover:bg-primary-dark text-white font-semibold px-5 py-2.5 rounded-md no-underline whitespace-nowrap transition-colors min-h-11 flex items-center"
+    >
+      Contact Us
+    </a>
+  </div>
+
+  <!-- Payment badges -->
+  <div class="max-w-6xl mx-auto px-6 pb-4 flex flex-wrap gap-2">
+    {
+      STORE.payments.map((p) => (
+        <span class="flex items-center gap-1.5 text-xs font-medium text-ink-soft bg-bg border border-border rounded-full px-3 py-1.5">
+          <Icon name={p.icon as any} class="w-3.5 h-3.5 shrink-0" />
+          {p.label}
+        </span>
+      ))
+    }
+  </div>
+</header>
+
+<script define:vars={{ openHour: STORE.hours.openHour, closeHour: STORE.hours.closeHour }}>
+  function updateOpenBadge() {
+    const dot = document.getElementById("open-dot");
+    const label = document.getElementById("open-label");
+    if (!dot || !label) return;
+    const hour = new Date().getHours();
+    const isOpen = hour >= openHour && hour < closeHour;
+    label.textContent = isOpen ? "Open Now" : "Closed Right Now";
+    dot.classList.toggle("bg-success", isOpen);
+    dot.classList.toggle("bg-danger", !isOpen);
+    dot.classList.toggle("bg-white/40", false);
+  }
+  updateOpenBadge();
+  setInterval(updateOpenBadge, 60000);
+</script>
