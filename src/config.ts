@@ -6,8 +6,8 @@ export const STORE = {
   hoursText: "Open Daily · 8 AM – 9 PM",
   promoMessage: "⚡ Now Available on DoorDash & UberEats! Get Snacks & Drinks Delivered To Your Door.",
   delivery: {
-    doordash: "https://www.doordash.com/",
-    ubereats: "https://www.ubereats.com/",
+    doordash: "https://www.doordash.com/convenience/store/34624439?event_type=autocomplete&pickup=false",
+    ubereats: "https://www.ubereats.com/store/mcnab-food-store/4cHv97LeV6KKp9fmA7yPpA?diningMode=DELIVERY&sc=SEARCH_SUGGESTION",
   },
   payments: [
     { label: "EBT / SNAP Accepted", icon: "banknote" },
