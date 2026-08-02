@@ -1,0 +1,115 @@
+---
+import { STORE } from "../config";
+import Icon from "./Icon.astro";
+---
+
+<section class="relative bg-gradient-to-b from-navy/95 via-navy to-slate-900 text-white overflow-hidden py-12 md:py-16 border-b border-border">
+  <!-- Glowing subtle backdrop circles -->
+  <div class="absolute top-0 right-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-0 left-10 w-72 h-72 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <!-- Text content -->
+      <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-emerald-300">
+          <Icon name="sparkles" class="w-4 h-4 text-emerald-400" />
+          <span>Tamarac's Favorite Neighborhood Stop</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight font-display">
+          Fresh Snacks, Cold Drinks & Everyday Essentials
+        </h1>
+
+        <p class="text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed">
+          Welcome to <strong class="text-white">{STORE.name}</strong>. Conveniently located at <span class="text-white font-medium">{STORE.address}</span>. Stop by in person or order online via DoorDash & UberEats!
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
+          <a
+            href="#catalog"
+            class="bg-primary hover:bg-primary-dark text-white font-bold px-6 py-3.5 rounded-xl shadow-lg hover:shadow-primary/30 transition-all flex items-center gap-2 no-underline text-base"
+          >
+            <Icon name="shoppingBag" class="w-5 h-5" />
+            <span>Browse Store Items</span>
+          </a>
+          
+          <a
+            href={STORE.mapDirectionsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold px-6 py-3.5 rounded-xl transition-all flex items-center gap-2 no-underline text-base backdrop-blur-md"
+          >
+            <Icon name="mapPin" class="w-5 h-5 text-emerald-400" />
+            <span>Get Directions</span>
+          </a>
+          
+          {STORE.phone && (
+            <a
+              href={`tel:${STORE.phone.replace(/[^0-9+]/g, "")}`}
+              class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-5 py-3.5 rounded-xl transition-all flex items-center gap-2 no-underline text-base shadow-md"
+            >
+              <Icon name="phone" class="w-5 h-5" />
+              <span>Call Store</span>
+            </a>
+          )}
+        </div>
+
+        <!-- Quick highlights badges -->
+        <div class="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs text-slate-300 border-t border-white/10">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>EBT / SNAP Accepted</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>Open Daily 8 AM – 9 PM</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>DoorDash & UberEats</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual Card -->
+      <div class="lg:col-span-5 flex justify-center">
+        <div class="relative w-full max-w-md bg-gradient-to-br from-white/10 to-white/5 border border-white/15 rounded-2xl p-6 shadow-2xl backdrop-blur-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-white/10 pb-4">
+            <div>
+              <div class="text-xs uppercase tracking-wider text-emerald-400 font-bold">Store Hours</div>
+              <div class="text-lg font-bold text-white">8:00 AM – 9:00 PM</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Days</div>
+              <div class="text-sm font-semibold text-white">Monday – Sunday</div>
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <div class="flex items-start gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
+              <div class="p-2 rounded-md bg-primary/20 text-primary-light shrink-0">
+                <Icon name="mapPin" class="w-5 h-5 text-emerald-400" />
+              </div>
+              <div class="text-xs text-slate-300">
+                <div class="font-bold text-white text-sm">Location</div>
+                <div>{STORE.address}</div>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
+              <div class="p-2 rounded-md bg-emerald-500/20 text-emerald-300 shrink-0">
+                <Icon name="phone" class="w-5 h-5 text-emerald-400" />
+              </div>
+              <div class="text-xs text-slate-300">
+                <div class="font-bold text-white text-sm">Phone Number</div>
+                <div>{STORE.phone}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

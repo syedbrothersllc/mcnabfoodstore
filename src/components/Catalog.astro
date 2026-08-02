@@ -1,21 +1,47 @@
 ---
 import { STORE } from "../config";
 import Icon from "./Icon.astro";
+import DeliveryPromo from "./DeliveryPromo.astro";
+import ShoppingListModal from "./ShoppingListModal.astro";
 ---
 
+<!-- Category Chips Nav -->
 <nav
   id="cat-bar"
-  class="sticky top-0 z-20 bg-surface border-b border-border overflow-x-auto whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden shadow-sm"
+  class="sticky top-[110px] z-20 bg-surface/95 backdrop-blur-md border-b border-border overflow-x-auto whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden shadow-xs"
 >
   <div id="cat-bar-inner" class="max-w-6xl mx-auto px-6 py-2.5 flex gap-2">
     <button
-      class="cat-chip font-medium text-sm px-3.5 py-2 rounded-md border border-primary bg-primary text-white transition-colors min-h-10"
+      class="cat-chip font-medium text-sm px-3.5 py-2 rounded-lg border border-primary bg-primary text-white transition-colors min-h-10"
       data-cat="all">All Items</button
     >
   </div>
 </nav>
 
-<div class="max-w-6xl mx-auto px-6 mt-6 flex flex-wrap items-center gap-3">
+<!-- Delivery Promo Banner -->
+<DeliveryPromo />
+
+<!-- Featured Items Carousel Spotlight -->
+<section id="featured-section" class="max-w-6xl mx-auto px-6 mt-8 hidden">
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-2">
+      <div class="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 font-bold">
+        <Icon name="sparkles" class="w-5 h-5" />
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-ink font-display m-0">Featured & Popular Items</h2>
+        <p class="text-ink-soft text-xs m-0">Handpicked favorites available now in store</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="featured-carousel" class="flex gap-4 overflow-x-auto pb-4 pt-1 snap-x [scrollbar-width:thin]">
+    <!-- Populated via JS -->
+  </div>
+</section>
+
+<!-- Search, Sort & Counter Controls -->
+<div id="catalog" class="max-w-6xl mx-auto px-6 mt-8 flex flex-wrap items-center gap-3">
   <div class="relative flex-1 min-w-[240px]">
     <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none">
       <Icon name="search" class="w-4 h-4" />
@@ -23,8 +49,8 @@ import Icon from "./Icon.astro";
     <input
       id="search-input"
       type="text"
-      placeholder="Search by name, category, or UPC…"
-      class="w-full pl-10 pr-10 py-3 border border-border rounded-md bg-surface font-body text-base text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary min-h-11"
+      placeholder="Search snacks, drinks, UPC, or categories…"
+      class="w-full pl-10 pr-10 py-3 border border-border rounded-xl bg-surface font-body text-base text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary min-h-11 shadow-xs"
     />
     <button
       id="search-clear"
@@ -34,9 +60,10 @@ import Icon from "./Icon.astro";
       <Icon name="x" class="w-4 h-4" />
     </button>
   </div>
+
   <select
     id="sort-select"
-    class="px-3 py-3 border border-border rounded-md bg-surface font-body text-sm font-medium text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary min-h-11"
+    class="px-3.5 py-3 border border-border rounded-xl bg-surface font-body text-sm font-medium text-ink focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary min-h-11 shadow-xs"
   >
     <option value="default">Sort: Featured</option>
     <option value="name-asc">Name: A → Z</option>
@@ -47,13 +74,14 @@ import Icon from "./Icon.astro";
   <span id="results-count" class="text-sm text-ink-soft font-medium whitespace-nowrap">Loading…</span>
 </div>
 
-<main class="max-w-6xl mx-auto px-6">
-  <div id="catalog" class="mt-6">
+<!-- Main Catalog Grid -->
+<main class="max-w-6xl mx-auto px-6 mb-16">
+  <div id="catalog-grid-container" class="mt-6">
     <div id="skeleton-grid" class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
       {
         Array.from({ length: 8 }).map(() => (
-          <div class="skeleton bg-surface border border-border rounded-lg overflow-hidden">
-            <div class="aspect-[4/3] bg-ink/5" />
+          <div class="skeleton bg-surface border border-border rounded-xl overflow-hidden">
+            <div class="aspect-[4/3] bg-ink/5 animate-pulse" />
             <div class="p-3.5 space-y-2">
               <div class="h-2.5 w-1/3 bg-ink/10 rounded" />
               <div class="h-4 w-2/3 bg-ink/10 rounded" />
@@ -68,56 +96,92 @@ import Icon from "./Icon.astro";
   <div id="pagination" class="flex justify-center items-center gap-2 my-10 flex-wrap"></div>
 </main>
 
+<!-- Back to top button -->
 <button
   id="back-to-top"
   aria-label="Back to top"
-  class="fixed bottom-6 right-6 z-30 bg-navy text-white w-12 h-12 rounded-full shadow-lg items-center justify-center text-lg font-bold hidden hover:bg-primary-dark transition-colors"
+  class="fixed bottom-20 md:bottom-6 right-6 z-30 bg-navy text-white w-11 h-11 rounded-full shadow-lg items-center justify-center text-lg font-bold hidden hover:bg-primary-dark transition-all border border-white/20"
 >
   ↑
 </button>
 
-<!-- Item detail modal -->
+<!-- Shopping List Drawer Component -->
+<ShoppingListModal />
+
+<!-- Item Detail Modal -->
 <div
   id="item-modal-backdrop"
-  class="hidden fixed inset-0 bg-black/50 z-40 items-center justify-center p-4"
+  class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center p-4 backdrop-blur-xs"
 >
   <div
     id="item-modal"
-    class="bg-surface rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
+    class="bg-surface rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative shadow-2xl border border-border overflow-hidden"
   >
     <button
       id="modal-close"
       aria-label="Close"
-      class="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-surface/90 border border-border flex items-center justify-center text-ink-soft hover:text-ink hover:bg-bg transition-colors"
+      class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-surface/90 border border-border flex items-center justify-center text-ink-soft hover:text-ink hover:bg-bg transition-colors shadow-xs"
     >
-      <Icon name="x" class="w-5 h-5" />
+      <Icon name="x" class="w-4 h-4" />
     </button>
-    <div id="modal-img-wrap" class="aspect-[4/3] bg-bg overflow-hidden border-b border-border">
+    <div id="modal-img-wrap" class="aspect-[4/3] bg-bg overflow-hidden border-b border-border relative">
       <img id="modal-img" src="" alt="" class="w-full h-full object-cover hidden" />
       <div id="modal-no-img" class="hidden w-full h-full items-center justify-center text-ink-soft text-sm">
         No photo available
       </div>
+      
+      <!-- Save to List Button in Modal -->
+      <button
+        id="modal-save-btn"
+        class="absolute bottom-3 right-3 bg-surface/90 backdrop-blur-md border border-border hover:bg-surface text-ink px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"
+      >
+        <Icon name="heart" class="w-4 h-4 text-red-500" />
+        <span id="modal-save-text">Save to List</span>
+      </button>
     </div>
-    <div class="p-6 flex flex-col gap-2.5">
-      <div id="modal-cat" class="text-[11px] uppercase font-semibold text-ink-soft tracking-wide"></div>
+
+    <div class="p-6 flex flex-col gap-3">
+      <div class="flex items-center justify-between">
+        <div id="modal-cat" class="text-[11px] uppercase font-semibold text-primary tracking-wide"></div>
+        <button id="modal-share-btn" class="text-xs text-ink-soft hover:text-ink flex items-center gap-1 font-medium bg-bg border border-border px-2.5 py-1 rounded-md transition-colors">
+          <Icon name="share" class="w-3.5 h-3.5" />
+          <span>Share Item</span>
+        </button>
+      </div>
+
       <div id="modal-name" class="font-display text-xl font-bold text-ink leading-snug"></div>
       <div id="modal-desc" class="text-ink-soft text-sm leading-relaxed"></div>
-      <div class="flex items-center justify-between mt-2">
-        <span id="modal-price" class="font-display font-bold text-ink text-2xl"></span>
-        <span id="modal-stock" class="text-xs font-semibold px-2.5 py-1 rounded"></span>
+      
+      <div class="flex items-center justify-between pt-2 border-t border-border mt-1">
+        <span id="modal-price" class="font-display font-extrabold text-ink text-2xl"></span>
+        <span id="modal-stock" class="text-xs font-semibold px-3 py-1 rounded-full"></span>
       </div>
-      <a
-        href="#inquiry"
-        id="modal-inquire"
-        class="mt-3 inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white font-semibold px-5 py-3 rounded-md no-underline transition-colors min-h-11"
-      >
-        Inquire About This Item
-      </a>
+
+      <div class="grid grid-cols-2 gap-3 mt-3">
+        <a
+          href="#inquiry"
+          id="modal-inquire"
+          class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white font-semibold text-xs sm:text-sm px-4 py-3 rounded-xl no-underline transition-colors min-h-11 shadow-sm text-center"
+        >
+          <Icon name="messageSquare" class="w-4 h-4" />
+          <span>Inquire / Reserve</span>
+        </a>
+
+        <a
+          href={STORE.delivery.doordash}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-xl no-underline transition-colors min-h-11 shadow-sm text-center"
+        >
+          <Icon name="truck" class="w-4 h-4" />
+          <span>Order Delivery</span>
+        </a>
+      </div>
     </div>
   </div>
 </div>
 
-<script define:vars={{ ITEMS_API_URL: STORE.itemsApiUrl }}>
+<script define:vars={{ ITEMS_API_URL: STORE.itemsApiUrl, STORE_NAME: STORE.name }}>
   let allItems = [];
   let activeCategory = "all";
   let searchTerm = "";
@@ -125,7 +189,115 @@ import Icon from "./Icon.astro";
   let currentPage = 1;
   const itemsPerPage = 24;
   let searchDebounceTimer = null;
+  let currentModalItem = null;
 
+  /* ---------------- LocalStorage Shopping List Logic ---------------- */
+  function getSavedItems() {
+    try {
+      return JSON.parse(localStorage.getItem("mcnab_saved_items") || "[]");
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveSavedItems(items) {
+    try {
+      localStorage.setItem("mcnab_saved_items", JSON.stringify(items));
+    } catch (e) {}
+    updateShoppingListUI();
+  }
+
+  function toggleSaveItem(item) {
+    let saved = getSavedItems();
+    const index = saved.findIndex((i) => i.name === item.name);
+    if (index >= 0) {
+      saved.splice(index, 1);
+    } else {
+      saved.push({ ...item, qty: 1 });
+    }
+    saveSavedItems(saved);
+    renderCatalog();
+    if (currentModalItem && currentModalItem.name === item.name) {
+      updateModalSaveButton(item);
+    }
+  }
+
+  function isItemSaved(itemName) {
+    const saved = getSavedItems();
+    return saved.some((i) => i.name === itemName);
+  }
+
+  function updateShoppingListUI() {
+    const saved = getSavedItems();
+    const count = saved.length;
+
+    // Update badges
+    const headerBadge = document.getElementById("header-list-badge");
+    const mobileBadge = document.getElementById("mobile-list-badge");
+    const modalCountBadge = document.getElementById("saved-items-count-badge");
+
+    if (headerBadge) headerBadge.textContent = String(count);
+    if (mobileBadge) {
+      mobileBadge.textContent = String(count);
+      mobileBadge.classList.toggle("hidden", count === 0);
+    }
+    if (modalCountBadge) modalCountBadge.textContent = `${count} ${count === 1 ? "item" : "items"}`;
+
+    // Render list modal items
+    const listBody = document.getElementById("shopping-list-body");
+    const emptyState = document.getElementById("empty-shopping-list");
+    const footer = document.getElementById("shopping-list-footer");
+    const totalEl = document.getElementById("shopping-list-total");
+
+    if (!listBody) return;
+
+    if (saved.length === 0) {
+      listBody.innerHTML = `
+        <div id="empty-shopping-list" class="text-center py-10 space-y-2">
+          <div class="w-12 h-12 rounded-full bg-bg mx-auto flex items-center justify-center text-ink-soft border border-border">
+            ♥
+          </div>
+          <div class="text-ink font-semibold text-base">Your shopping list is empty</div>
+          <p class="text-ink-soft text-xs max-w-xs mx-auto">
+            Tap the heart icon on any product card to save items for your next visit to McNab Food Store!
+          </p>
+        </div>
+      `;
+      if (footer) footer.classList.add("hidden");
+    } else {
+      let total = 0;
+      listBody.innerHTML = "";
+      saved.forEach((item, idx) => {
+        const p = Number(String(item.price || "").replace(/[^0-9.]/g, "")) || 0;
+        const itemTotal = p * (item.qty || 1);
+        total += itemTotal;
+
+        const row = document.createElement("div");
+        row.className = "flex items-center justify-between gap-3 p-3 bg-bg border border-border rounded-xl";
+        row.innerHTML = `
+          <div class="flex-1 min-w-0">
+            <div class="text-xs uppercase font-semibold text-ink-soft">${escapeHtml(item.category || "General")}</div>
+            <div class="text-sm font-semibold text-ink truncate">${escapeHtml(item.name)}</div>
+            <div class="text-xs font-bold text-primary mt-0.5">${item.price ? money(item.price) : "Inquire for price"}</div>
+          </div>
+          <button class="remove-saved-item text-ink-soft hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition-colors" data-idx="${idx}">
+            ✕
+          </button>
+        `;
+        row.querySelector(".remove-saved-item").addEventListener("click", () => {
+          saved.splice(idx, 1);
+          saveSavedItems(saved);
+          renderCatalog();
+        });
+        listBody.appendChild(row);
+      });
+
+      if (totalEl) totalEl.textContent = "$" + total.toFixed(2);
+      if (footer) footer.classList.remove("hidden");
+    }
+  }
+
+  /* ---------------- Helper functions ---------------- */
   function stockClass(stock) {
     const s = (stock || "").toLowerCase();
     if (s.includes("out")) return "bg-danger-soft text-danger";
@@ -150,6 +322,42 @@ import Icon from "./Icon.astro";
     );
   }
 
+  /* ---------------- Shopping List Modal Drawer Toggle ---------------- */
+  const shoppingListBackdrop = document.getElementById("shopping-list-backdrop");
+
+  function openShoppingList() {
+    updateShoppingListUI();
+    if (shoppingListBackdrop) {
+      shoppingListBackdrop.classList.remove("hidden");
+      shoppingListBackdrop.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    }
+  }
+
+  function closeShoppingList() {
+    if (shoppingListBackdrop) {
+      shoppingListBackdrop.classList.add("hidden");
+      shoppingListBackdrop.classList.remove("flex");
+      document.body.style.overflow = "";
+    }
+  }
+
+  document.getElementById("open-shopping-list-btn")?.addEventListener("click", openShoppingList);
+  document.getElementById("mobile-open-list-btn")?.addEventListener("click", openShoppingList);
+  document.getElementById("close-shopping-list-btn")?.addEventListener("click", closeShoppingList);
+  shoppingListBackdrop?.addEventListener("click", (e) => {
+    if (e.target === shoppingListBackdrop) closeShoppingList();
+  });
+
+  document.getElementById("clear-shopping-list-btn")?.addEventListener("click", () => {
+    saveSavedItems([]);
+    renderCatalog();
+  });
+
+  document.getElementById("print-shopping-list-btn")?.addEventListener("click", () => {
+    window.print();
+  });
+
   /* ---------------- Item detail modal ---------------- */
   const modalBackdrop = document.getElementById("item-modal-backdrop");
   const modalImg = document.getElementById("modal-img");
@@ -159,8 +367,21 @@ import Icon from "./Icon.astro";
   const modalDesc = document.getElementById("modal-desc");
   const modalPrice = document.getElementById("modal-price");
   const modalStock = document.getElementById("modal-stock");
+  const modalSaveBtn = document.getElementById("modal-save-btn");
+  const modalSaveText = document.getElementById("modal-save-text");
+  const modalShareBtn = document.getElementById("modal-share-btn");
+
+  function updateModalSaveButton(item) {
+    const saved = isItemSaved(item.name);
+    modalSaveText.textContent = saved ? "Saved in List" : "Save to List";
+    modalSaveBtn.classList.toggle("bg-primary", saved);
+    modalSaveBtn.classList.toggle("text-white", saved);
+    modalSaveBtn.classList.toggle("bg-surface/90", !saved);
+    modalSaveBtn.classList.toggle("text-ink", !saved);
+  }
 
   function openModal(item) {
+    currentModalItem = item;
     if (item.image) {
       modalImg.src = item.image;
       modalImg.alt = item.name || "Item photo";
@@ -177,7 +398,9 @@ import Icon from "./Icon.astro";
     modalDesc.style.display = item.description ? "block" : "none";
     modalPrice.textContent = item.price ? money(item.price) : "";
     modalStock.textContent = item.stock || "In Stock";
-    modalStock.className = "text-xs font-semibold px-2.5 py-1 rounded " + stockClass(item.stock);
+    modalStock.className = "text-xs font-semibold px-3 py-1 rounded-full " + stockClass(item.stock);
+
+    updateModalSaveButton(item);
 
     modalBackdrop.classList.remove("hidden");
     modalBackdrop.classList.add("flex");
@@ -190,14 +413,49 @@ import Icon from "./Icon.astro";
     document.body.style.overflow = "";
   }
 
-  document.getElementById("modal-close").addEventListener("click", closeModal);
-  modalBackdrop.addEventListener("click", (e) => {
+  document.getElementById("modal-close")?.addEventListener("click", closeModal);
+  modalBackdrop?.addEventListener("click", (e) => {
     if (e.target === modalBackdrop) closeModal();
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal();
+    if (e.key === "Escape") {
+      closeModal();
+      closeShoppingList();
+    }
   });
-  document.getElementById("modal-inquire").addEventListener("click", closeModal);
+
+  modalSaveBtn?.addEventListener("click", () => {
+    if (currentModalItem) toggleSaveItem(currentModalItem);
+  });
+
+  // Pre-fill inquiry form when clicking Inquire in Modal
+  document.getElementById("modal-inquire")?.addEventListener("click", () => {
+    closeModal();
+    if (currentModalItem) {
+      const subjectInput = document.querySelector("#inquiry input[type='text'], #inquiry input[name='entry.12345']");
+      if (subjectInput) {
+        subjectInput.value = `Inquiry regarding: ${currentModalItem.name} ${currentModalItem.upc ? `(UPC: ${currentModalItem.upc})` : ""}`;
+      }
+    }
+  });
+
+  // Share item button
+  modalShareBtn?.addEventListener("click", async () => {
+    if (!currentModalItem) return;
+    const shareData = {
+      title: `${currentModalItem.name} at ${STORE_NAME}`,
+      text: `Check out ${currentModalItem.name} ${currentModalItem.price ? `for ${money(currentModalItem.price)}` : ""} at McNab Food Store!`,
+      url: window.location.href,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (e) {}
+    } else {
+      navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+      alert("Item information copied to clipboard!");
+    }
+  });
 
   /* ---------------- Category chips ---------------- */
   function renderCategoryChips() {
@@ -208,14 +466,15 @@ import Icon from "./Icon.astro";
     });
     const cats = ["all", ...Object.keys(counts)];
     const inner = document.getElementById("cat-bar-inner");
+    if (!inner) return;
     inner.innerHTML = "";
     cats.forEach((cat) => {
       const btn = document.createElement("button");
       const isActive = cat === activeCategory;
       btn.className =
-        "cat-chip font-medium text-sm px-3.5 py-2 rounded-md border transition-colors min-h-10 " +
+        "cat-chip font-medium text-sm px-3.5 py-2 rounded-lg border transition-all min-h-10 " +
         (isActive
-          ? "bg-primary text-white border-primary"
+          ? "bg-primary text-white border-primary shadow-xs"
           : "bg-surface text-ink-soft border-border hover:border-primary hover:text-primary");
       const countLabel = cat === "all" ? allItems.length : counts[cat];
       btn.textContent = `${cat === "all" ? "All Items" : cat} (${countLabel})`;
@@ -226,6 +485,46 @@ import Icon from "./Icon.astro";
         renderCatalog();
       });
       inner.appendChild(btn);
+    });
+  }
+
+  /* ---------------- Featured Section Spotlight ---------------- */
+  function renderFeaturedSection() {
+    const featuredSec = document.getElementById("featured-section");
+    const carousel = document.getElementById("featured-carousel");
+    if (!featuredSec || !carousel) return;
+
+    // Pick top items with photos or marked in stock
+    const featuredItems = allItems.filter((i) => i.image && !isOutOfStock(i.stock)).slice(0, 8);
+    if (featuredItems.length === 0) {
+      featuredSec.classList.add("hidden");
+      return;
+    }
+
+    featuredSec.classList.remove("hidden");
+    carousel.innerHTML = "";
+
+    featuredItems.forEach((item) => {
+      const card = document.createElement("div");
+      card.className =
+        "snap-start shrink-0 w-52 bg-surface border border-border rounded-xl overflow-hidden flex flex-col transition-all hover:shadow-md hover:border-primary/40 cursor-pointer group";
+      card.addEventListener("click", () => openModal(item));
+
+      card.innerHTML = `
+        <div class="aspect-[4/3] bg-bg relative overflow-hidden border-b border-border">
+          <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          <span class="absolute top-2 left-2 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">Featured</span>
+        </div>
+        <div class="p-3 flex flex-col gap-1 flex-1">
+          <div class="text-[10px] uppercase font-semibold text-ink-soft">${escapeHtml(item.category || "General")}</div>
+          <div class="font-display text-sm font-bold text-ink leading-snug line-clamp-1">${escapeHtml(item.name)}</div>
+          <div class="flex items-center justify-between mt-auto pt-1">
+            <span class="font-display font-extrabold text-ink text-sm">${money(item.price)}</span>
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">In Stock</span>
+          </div>
+        </div>
+      `;
+      carousel.appendChild(card);
     });
   }
 
@@ -242,12 +541,13 @@ import Icon from "./Icon.astro";
 
   function renderPagination(totalItems) {
     const pagEl = document.getElementById("pagination");
+    if (!pagEl) return;
     pagEl.innerHTML = "";
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     if (totalPages <= 1) return;
 
     const btnClass =
-      "px-4 py-2.5 border border-border rounded-md bg-surface font-medium text-sm text-ink-soft hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:text-ink-soft transition-colors min-h-11 min-w-11";
+      "px-4 py-2.5 border border-border rounded-xl bg-surface font-medium text-sm text-ink-soft hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed transition-colors min-h-11 min-w-11";
 
     const prevBtn = document.createElement("button");
     prevBtn.className = btnClass;
@@ -256,7 +556,7 @@ import Icon from "./Icon.astro";
     prevBtn.onclick = () => {
       currentPage--;
       renderCatalog();
-      window.scrollTo({ top: 200, behavior: "smooth" });
+      window.scrollTo({ top: 300, behavior: "smooth" });
     };
     pagEl.appendChild(prevBtn);
 
@@ -267,12 +567,12 @@ import Icon from "./Icon.astro";
       const isActive = i === currentPage;
       btn.className =
         btnClass.replace("text-ink-soft", isActive ? "text-white" : "text-ink-soft") +
-        (isActive ? " bg-primary border-primary text-white" : "");
+        (isActive ? " bg-primary border-primary text-white shadow-xs" : "");
       btn.textContent = String(i);
       btn.onclick = () => {
         currentPage = i;
         renderCatalog();
-        window.scrollTo({ top: 200, behavior: "smooth" });
+        window.scrollTo({ top: 300, behavior: "smooth" });
       };
       pagEl.appendChild(btn);
     }
@@ -284,13 +584,14 @@ import Icon from "./Icon.astro";
     nextBtn.onclick = () => {
       currentPage++;
       renderCatalog();
-      window.scrollTo({ top: 200, behavior: "smooth" });
+      window.scrollTo({ top: 300, behavior: "smooth" });
     };
     pagEl.appendChild(nextBtn);
   }
 
   function renderCatalog() {
-    const container = document.getElementById("catalog");
+    const container = document.getElementById("catalog-grid-container");
+    if (!container) return;
     let items = allItems;
 
     if (activeCategory !== "all") {
@@ -308,11 +609,12 @@ import Icon from "./Icon.astro";
     }
     items = applySort(items);
 
-    document.getElementById("results-count").textContent = `${items.length.toLocaleString()} items`;
+    const resultsEl = document.getElementById("results-count");
+    if (resultsEl) resultsEl.textContent = `${items.length.toLocaleString()} items`;
 
     if (items.length === 0) {
       container.innerHTML =
-        '<div class="text-center py-16 text-ink-soft text-lg">No items match your search. Try a different term or category.</div>';
+        '<div class="text-center py-16 text-ink-soft text-base bg-surface border border-border rounded-2xl">No items match your search. Try searching for snacks, beverages, or another category!</div>';
       document.getElementById("pagination").innerHTML = "";
       return;
     }
@@ -325,19 +627,15 @@ import Icon from "./Icon.astro";
 
     paginatedItems.forEach((item) => {
       const outOfStock = isOutOfStock(item.stock);
+      const saved = isItemSaved(item.name);
+
       const card = document.createElement("div");
       card.className =
-        "bg-surface border border-border rounded-lg overflow-hidden flex flex-col transition-shadow hover:shadow-md cursor-pointer" +
+        "bg-surface border border-border rounded-2xl overflow-hidden flex flex-col transition-all hover:shadow-lg hover:border-primary/30 group relative cursor-pointer" +
         (outOfStock ? " opacity-60" : "");
       card.setAttribute("role", "button");
       card.setAttribute("tabindex", "0");
       card.addEventListener("click", () => openModal(item));
-      card.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          openModal(item);
-        }
-      });
 
       const imgWrap = document.createElement("div");
       imgWrap.className = "aspect-[4/3] bg-bg relative overflow-hidden border-b border-border";
@@ -346,23 +644,39 @@ import Icon from "./Icon.astro";
         img.src = item.image;
         img.alt = item.name || "Item photo";
         img.loading = "lazy";
-        img.className = "w-full h-full object-cover block";
+        img.className = "w-full h-full object-cover block group-hover:scale-105 transition-transform duration-300";
         imgWrap.appendChild(img);
       } else {
         imgWrap.classList.add("flex", "items-center", "justify-center", "text-ink-soft", "text-xs");
         imgWrap.textContent = "No photo available";
       }
+
+      // Save Heart Icon Button on Card
+      const heartBtn = document.createElement("button");
+      heartBtn.className =
+        "absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full border flex items-center justify-center transition-all shadow-xs " +
+        (saved
+          ? "bg-primary text-white border-primary"
+          : "bg-surface/80 backdrop-blur-md text-ink-soft border-border hover:bg-surface hover:text-red-500");
+      heartBtn.innerHTML = saved ? "♥" : "♡";
+      heartBtn.ariaLabel = saved ? "Remove from shopping list" : "Save to shopping list";
+      heartBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleSaveItem(item);
+      });
+      imgWrap.appendChild(heartBtn);
+
       card.appendChild(imgWrap);
 
       const body = document.createElement("div");
-      body.className = "p-3.5 flex flex-col gap-1.5 flex-1";
+      body.className = "p-4 flex flex-col gap-1.5 flex-1";
       body.innerHTML = `
-        <div class="text-[10px] uppercase font-semibold text-ink-soft tracking-wide">${escapeHtml(item.category || "General")}</div>
-        <div class="font-display text-[0.95rem] font-semibold leading-snug text-ink">${escapeHtml(item.name)}</div>
-        ${item.description ? `<div class="text-ink-soft text-[13px] leading-snug line-clamp-2">${escapeHtml(item.description)}</div>` : ""}
-        <div class="flex items-center justify-between mt-auto pt-1.5">
-          ${item.price ? `<span class="font-display font-bold text-ink text-base">${money(item.price)}</span>` : "<span></span>"}
-          <span class="text-[10px] font-semibold px-2 py-0.5 rounded ${stockClass(item.stock)}">${escapeHtml(item.stock || "In Stock")}</span>
+        <div class="text-[10px] uppercase font-bold text-primary tracking-wide">${escapeHtml(item.category || "General")}</div>
+        <div class="font-display text-[0.95rem] font-bold leading-snug text-ink group-hover:text-primary transition-colors">${escapeHtml(item.name)}</div>
+        ${item.description ? `<div class="text-ink-soft text-xs leading-relaxed line-clamp-2">${escapeHtml(item.description)}</div>` : ""}
+        <div class="flex items-center justify-between mt-auto pt-2 border-t border-border/60">
+          ${item.price ? `<span class="font-display font-extrabold text-ink text-base">${money(item.price)}</span>` : "<span></span>"}
+          <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full ${stockClass(item.stock)}">${escapeHtml(item.stock || "In Stock")}</span>
         </div>
       `;
       card.appendChild(body);
@@ -375,52 +689,54 @@ import Icon from "./Icon.astro";
   }
 
   async function loadItems() {
-    const container = document.getElementById("catalog");
+    const container = document.getElementById("catalog-grid-container");
     try {
       const res = await fetch(ITEMS_API_URL);
       if (!res.ok) throw new Error("Bad response: " + res.status);
       const data = await res.json();
       allItems = data.items || [];
       if (allItems.length === 0) {
-        container.innerHTML =
-          '<div class="text-center py-16 text-ink-soft text-lg">No items in stock right now — check back soon.</div>';
-        document.getElementById("results-count").textContent = "0 items";
+        if (container)
+          container.innerHTML =
+            '<div class="text-center py-16 text-ink-soft text-lg bg-surface border border-border rounded-2xl">No items in stock right now — check back soon.</div>';
         return;
       }
       renderCategoryChips();
+      renderFeaturedSection();
       renderCatalog();
+      updateShoppingListUI();
     } catch (err) {
-      container.innerHTML =
-        '<div class="text-center py-16 text-ink-soft text-lg">Couldn\'t load items right now. Please refresh, or contact us below.</div>';
-      document.getElementById("results-count").textContent = "";
+      if (container)
+        container.innerHTML =
+          '<div class="text-center py-16 text-ink-soft text-base bg-surface border border-border rounded-2xl">Couldn\'t load items right now. Please refresh or contact us below.</div>';
       console.error(err);
     }
   }
 
-  /* ---------------- Search (debounced, with clear button) ---------------- */
+  /* ---------------- Search & Sort Event Listeners ---------------- */
   const searchInput = document.getElementById("search-input");
   const searchClear = document.getElementById("search-clear");
 
   function setSearchTerm(value) {
     searchTerm = value;
     currentPage = 1;
-    searchClear.classList.toggle("hidden", !value);
+    if (searchClear) searchClear.classList.toggle("hidden", !value);
     renderCatalog();
   }
 
-  searchInput.addEventListener("input", (e) => {
+  searchInput?.addEventListener("input", (e) => {
     const value = e.target.value;
     clearTimeout(searchDebounceTimer);
     searchDebounceTimer = setTimeout(() => setSearchTerm(value), 200);
   });
 
-  searchClear.addEventListener("click", () => {
-    searchInput.value = "";
+  searchClear?.addEventListener("click", () => {
+    if (searchInput) searchInput.value = "";
     setSearchTerm("");
-    searchInput.focus();
+    searchInput?.focus();
   });
 
-  document.getElementById("sort-select").addEventListener("change", (e) => {
+  document.getElementById("sort-select")?.addEventListener("change", (e) => {
     sortMode = e.target.value;
     currentPage = 1;
     renderCatalog();
@@ -428,9 +744,10 @@ import Icon from "./Icon.astro";
 
   const backToTop = document.getElementById("back-to-top");
   window.addEventListener("scroll", () => {
-    backToTop.style.display = window.scrollY > 500 ? "flex" : "none";
+    if (backToTop) backToTop.style.display = window.scrollY > 500 ? "flex" : "none";
   });
-  backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  backToTop?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 
+  // Initial load
   loadItems();
 </script>

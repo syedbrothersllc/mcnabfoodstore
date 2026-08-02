@@ -1,0 +1,50 @@
+---
+import { STORE } from "../config";
+import Icon from "./Icon.astro";
+---
+
+<!-- Fixed mobile quick action bar -->
+<div id="mobile-action-bar" class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-navy/95 backdrop-blur-lg border-t border-white/10 px-4 py-2.5 shadow-2xl transition-transform">
+  <div class="flex items-center justify-around gap-2">
+    <a
+      href={STORE.mapDirectionsUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="flex flex-col items-center gap-1 text-slate-300 hover:text-white transition-colors no-underline text-[11px] font-medium py-1 px-2"
+    >
+      <Icon name="mapPin" class="w-5 h-5 text-emerald-400" />
+      <span>Map</span>
+    </a>
+
+    {STORE.phone && (
+      <a
+        href={`tel:${STORE.phone.replace(/[^0-9+]/g, "")}`}
+        class="flex flex-col items-center gap-1 text-slate-300 hover:text-white transition-colors no-underline text-[11px] font-medium py-1 px-2"
+      >
+        <Icon name="phone" class="w-5 h-5 text-emerald-400" />
+        <span>Call</span>
+      </a>
+    )}
+
+    <button
+      id="mobile-open-list-btn"
+      class="flex flex-col items-center gap-1 text-slate-300 hover:text-white transition-colors text-[11px] font-medium py-1 px-2 relative"
+    >
+      <div class="relative">
+        <Icon name="shoppingBag" class="w-5 h-5 text-amber-400" />
+        <span id="mobile-list-badge" class="hidden absolute -top-1.5 -right-2.5 bg-primary text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center border border-navy">0</span>
+      </div>
+      <span>Saved</span>
+    </button>
+
+    <a
+      href={STORE.delivery.doordash}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-3 py-2 rounded-lg transition-colors no-underline"
+    >
+      <Icon name="truck" class="w-4 h-4" />
+      <span>Delivery</span>
+    </a>
+  </div>
+</div>

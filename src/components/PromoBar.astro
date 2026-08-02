@@ -1,0 +1,39 @@
+---
+import { STORE } from "../config";
+import Icon from "./Icon.astro";
+---
+
+<div class="bg-gradient-to-r from-navy via-navy-light to-navy text-white text-xs py-2 px-4 border-b border-white/10 relative z-30">
+  <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-2">
+    <div class="flex items-center gap-2 font-medium">
+      <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[11px] font-semibold flex items-center gap-1">
+        <Icon name="truck" class="w-3 h-3 shrink-0" /> Delivery Active
+      </span>
+      <span class="hidden sm:inline text-white/90">
+        {STORE.promoMessage}
+      </span>
+      <span class="sm:hidden text-white/90 truncate max-w-[200px]">
+        On DoorDash & UberEats!
+      </span>
+    </div>
+
+    <div class="flex items-center gap-3 shrink-0">
+      <a
+        href={STORE.delivery.doordash}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="bg-red-600 hover:bg-red-700 text-white font-bold text-[11px] px-2.5 py-1 rounded transition-colors no-underline flex items-center gap-1"
+      >
+        DoorDash
+      </a>
+      <a
+        href={STORE.delivery.ubereats}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="bg-black hover:bg-zinc-800 text-emerald-400 font-bold text-[11px] px-2.5 py-1 rounded transition-colors no-underline border border-emerald-500/30 flex items-center gap-1"
+      >
+        UberEats
+      </a>
+    </div>
+  </div>
+</div>

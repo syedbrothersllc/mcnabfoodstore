@@ -2,17 +2,21 @@ export const STORE = {
   name: "McNab Food Store",
   tagline: "Your neighborhood stop for snacks, drinks & essentials",
   address: "8013 W McNab Rd, Tamarac, FL 33321",
-  phone: "", // add e.g. "+1 (954) 555-0123" to enable the click-to-call button
+  phone: "+1 (754) 305-2531",
   hoursText: "Open Daily · 8 AM – 9 PM",
+  promoMessage: "⚡ Now Available on DoorDash & UberEats! Get Snacks & Drinks Delivered To Your Door.",
+  delivery: {
+    doordash: "https://www.doordash.com/",
+    ubereats: "https://www.ubereats.com/",
+  },
   payments: [
     { label: "EBT / SNAP Accepted", icon: "banknote" },
-    { label: "Cards", icon: "creditCard" },
+    { label: "Cards Accepted", icon: "creditCard" },
     { label: "Cash", icon: "banknote" },
     { label: "Apple Pay", icon: "smartphone" },
     { label: "Google Pay", icon: "smartphone" },
   ],
-  // Used to compute the live "Open now / Closed" badge. Same hours every day for now —
-  // adjust openHour/closeHour (24hr) or extend into a per-day map if hours ever vary.
+  // Used to compute the live "Open now / Closed" badge.
   hours: { openHour: 8, closeHour: 21 },
 
   // Backend endpoints — unchanged from the current site
