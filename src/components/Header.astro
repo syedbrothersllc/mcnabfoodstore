@@ -4,29 +4,29 @@ import Icon from "./Icon.astro";
 import PromoBar from "./PromoBar.astro";
 ---
 
-<header class="bg-surface border-b border-border sticky top-0 z-30 shadow-sm">
+<header class="bg-surface border-b border-border relative md:sticky top-0 z-30 shadow-xs">
   <!-- Promo Announcement Bar -->
   <PromoBar />
 
   <!-- Utility bar -->
   <div class="bg-navy text-white text-xs">
-    <div class="max-w-6xl mx-auto px-6 py-2 flex flex-wrap justify-between items-center gap-2">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-1.5 flex flex-wrap justify-between items-center gap-2">
       <a
         href={STORE.mapDirectionsUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center gap-1.5 text-white/80 hover:text-white transition-colors no-underline"
+        class="flex items-center gap-1.5 text-white/80 hover:text-white transition-colors no-underline text-[11px] sm:text-xs truncate max-w-[240px] sm:max-w-none"
       >
         <Icon name="mapPin" class="w-3.5 h-3.5 shrink-0 text-emerald-400" />
-        <span>{STORE.address}</span>
+        <span class="truncate">{STORE.address}</span>
       </a>
 
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
         {
           STORE.phone && (
             <a
               href={`tel:${STORE.phone.replace(/[^0-9+]/g, "")}`}
-              class="flex items-center gap-1.5 text-white/80 hover:text-white transition-colors no-underline font-semibold"
+              class="flex items-center gap-1.5 text-white/80 hover:text-white transition-colors no-underline font-semibold text-[11px] sm:text-xs"
             >
               <Icon name="phone" class="w-3.5 h-3.5 shrink-0 text-emerald-400" />
               <span>{STORE.phone}</span>
@@ -36,48 +36,48 @@ import PromoBar from "./PromoBar.astro";
         <span class="text-white/80 hidden sm:inline">{STORE.hoursText}</span>
         <span id="open-badge" class="flex items-center gap-1.5 text-[11px] font-semibold">
           <span id="open-dot" class="w-2 h-2 rounded-full bg-white/40"></span>
-          <span id="open-label">Checking hours…</span>
+          <span id="open-label" class="hidden sm:inline">Checking hours…</span>
         </span>
       </div>
     </div>
   </div>
 
   <!-- Main header -->
-  <div class="max-w-6xl mx-auto px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-2.5 sm:py-4 flex items-center justify-between gap-3">
     <div>
       <a href="/" class="no-underline">
-        <h1 class="font-display font-extrabold text-ink text-[clamp(1.4rem,2.8vw,1.8rem)] leading-tight m-0 tracking-tight">
+        <h1 class="font-display font-extrabold text-ink text-xl sm:text-2xl leading-tight m-0 tracking-tight">
           {STORE.name}
         </h1>
       </a>
-      <p class="text-ink-soft text-xs sm:text-sm mt-0.5 m-0">{STORE.tagline}</p>
+      <p class="text-ink-soft text-xs mt-0.5 m-0 hidden sm:block">{STORE.tagline}</p>
     </div>
 
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2 sm:gap-3 shrink-0">
       <button
         id="open-shopping-list-btn"
-        class="flex items-center gap-2 bg-bg hover:bg-border/60 text-ink font-semibold text-xs sm:text-sm px-3.5 py-2.5 rounded-lg border border-border transition-colors min-h-11 relative"
+        class="flex items-center gap-1.5 sm:gap-2 bg-bg hover:bg-border/60 text-ink font-semibold text-xs sm:text-sm px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-lg border border-border transition-colors min-h-9 sm:min-h-11 relative"
       >
         <Icon name="shoppingBag" class="w-4 h-4 text-primary" />
         <span class="hidden sm:inline">Shopping List</span>
         <span
           id="header-list-badge"
-          class="bg-primary text-white text-[11px] font-bold px-2 py-0.5 rounded-full"
+          class="bg-primary text-white text-[11px] font-bold px-1.5 py-0.5 rounded-full"
           >0</span
         >
       </button>
 
       <a
         href="#inquiry"
-        class="bg-primary hover:bg-primary-dark text-white font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-lg no-underline whitespace-nowrap transition-colors min-h-11 flex items-center shadow-sm"
+        class="bg-primary hover:bg-primary-dark text-white font-semibold text-xs sm:text-sm px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-lg no-underline whitespace-nowrap transition-colors min-h-9 sm:min-h-11 flex items-center shadow-xs"
       >
         Contact Us
       </a>
     </div>
   </div>
 
-  <!-- Payment badges -->
-  <div class="max-w-6xl mx-auto px-6 pb-3 flex flex-wrap gap-2">
+  <!-- Payment badges (hidden on tiny screens to save space) -->
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 pb-2.5 hidden sm:flex flex-wrap gap-2">
     {
       STORE.payments.map((p) => (
         <span class="flex items-center gap-1.5 text-[11px] font-medium text-ink-soft bg-bg border border-border rounded-full px-2.5 py-1">
@@ -96,7 +96,7 @@ import PromoBar from "./PromoBar.astro";
     if (!dot || !label) return;
     const hour = new Date().getHours();
     const isOpen = hour >= openHour && hour < closeHour;
-    label.textContent = isOpen ? "Open Now" : "Closed Right Now";
+    if (label) label.textContent = isOpen ? "Open Now" : "Closed Right Now";
     dot.classList.toggle("bg-success", isOpen);
     dot.classList.toggle("bg-danger", !isOpen);
     dot.classList.toggle("bg-white/40", false);
