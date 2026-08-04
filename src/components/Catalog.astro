@@ -610,14 +610,26 @@ import ShoppingListModal from "./ShoppingListModal.astro";
       items = items.filter((i) => (i.category || "Other") === activeCategory);
     }
     if (searchTerm) {
-      const t = searchTerm.toLowerCase();
-      items = items.filter(
-        (i) =>
-          (i.name || "").toLowerCase().includes(t) ||
-          (i.description || "").toLowerCase().includes(t) ||
-          (i.category || "").toLowerCase().includes(t) ||
-          (i.upc || "").toLowerCase().includes(t)
-      );
+      const t = searchTerm.trim().toLowerCase();
+      const tDigits = t.replace(/[^0-9]/g, "").replace(/^0+/, "");
+      const isNumericSearch = tDigits.length >= 3;
+
+      items = items.filter((i) => {
+        const nameMatch = (i.name || "").toLowerCase().includes(t);
+        const descMatch = (i.description || "").toLowerCase().includes(t);
+        const catMatch = (i.category || "").toLowerCase().includes(t);
+        const rawUpcMatch = (i.upc || "").toLowerCase().includes(t);
+
+        let normUpcMatch = false;
+        if (isNumericSearch && i.upc) {
+          const itemUpcDigits = String(i.upc).replace(/[^0-9]/g, "").replace(/^0+/, "");
+          if (itemUpcDigits.includes(tDigits)) {
+            normUpcMatch = true;
+          }
+        }
+
+        return nameMatch || descMatch || catMatch || rawUpcMatch || normUpcMatch;
+      });
     }
     items = applySort(items);
 
@@ -683,7 +695,10 @@ import ShoppingListModal from "./ShoppingListModal.astro";
       const body = document.createElement("div");
       body.className = "p-4 flex flex-col gap-1.5 flex-1";
       body.innerHTML = `
-        <div class="text-[10px] uppercase font-bold text-primary tracking-wide">${escapeHtml(item.category || "General")}</div>
+        <div class="flex items-center justify-between gap-1 text-[10px]">
+          <span class="uppercase font-bold text-primary tracking-wide truncate">${escapeHtml(item.category || "General")}</span>
+          ${item.upc ? `<span class="font-mono text-ink-soft/80 shrink-0">UPC: ${escapeHtml(item.upc)}</span>` : ""}
+        </div>
         <div class="font-display text-[0.95rem] font-bold leading-snug text-ink group-hover:text-primary transition-colors">${escapeHtml(item.name)}</div>
         ${item.description ? `<div class="text-ink-soft text-xs leading-relaxed line-clamp-2">${escapeHtml(item.description)}</div>` : ""}
         <div class="flex items-center justify-between mt-auto pt-2 border-t border-border/60">
