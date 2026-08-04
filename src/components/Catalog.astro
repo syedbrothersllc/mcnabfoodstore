@@ -733,7 +733,17 @@ import ShoppingListModal from "./ShoppingListModal.astro";
       const res = await fetch(ITEMS_API_URL);
       if (!res.ok) throw new Error("Bad response: " + res.status);
       const data = await res.json();
-      allItems = data.items || [];
+      const rawList = Array.isArray(data) ? data : (data.items || data.data || []);
+      allItems = rawList.map((item) => {
+        let upc = item.upc || item.UPC || "";
+        if (!upc && item.image && item.image.includes("openfoodfacts.org/images/products/")) {
+          const match = item.image.match(/\/images\/products\/([0-9\/]+)/);
+          if (match && match[1]) {
+            upc = match[1].replace(/\//g, "");
+          }
+        }
+        return { ...item, upc };
+      });
       if (allItems.length === 0) {
         if (container)
           container.innerHTML =
