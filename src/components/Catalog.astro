@@ -124,8 +124,8 @@ import ShoppingListModal from "./ShoppingListModal.astro";
     >
       <Icon name="x" class="w-4 h-4" />
     </button>
-    <div id="modal-img-wrap" class="aspect-[4/3] bg-bg overflow-hidden border-b border-border relative">
-      <img id="modal-img" src="" alt="" class="w-full h-full object-cover hidden" />
+    <div id="modal-img-wrap" class="aspect-[4/3] bg-white p-6 overflow-hidden border-b border-border relative flex items-center justify-center">
+      <img id="modal-img" src="" alt="" class="max-w-full max-h-full object-contain hidden transition-transform duration-300" />
       <div id="modal-no-img" class="hidden w-full h-full items-center justify-center text-ink-soft text-sm">
         No photo available
       </div>
@@ -523,9 +523,9 @@ import ShoppingListModal from "./ShoppingListModal.astro";
       card.addEventListener("click", () => openModal(item));
 
       card.innerHTML = `
-        <div class="aspect-[4/3] bg-bg relative overflow-hidden border-b border-border">
-          <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-          <span class="absolute top-2 left-2 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">Featured</span>
+        <div class="aspect-[4/3] bg-white p-3.5 relative overflow-hidden border-b border-border flex items-center justify-center">
+          <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy" class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+          <span class="absolute top-2 left-2 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs z-10">Featured</span>
         </div>
         <div class="p-3 flex flex-col gap-1 flex-1">
           <div class="text-[10px] uppercase font-semibold text-ink-soft">${escapeHtml(item.category || "General")}</div>
@@ -662,16 +662,16 @@ import ShoppingListModal from "./ShoppingListModal.astro";
       card.addEventListener("click", () => openModal(item));
 
       const imgWrap = document.createElement("div");
-      imgWrap.className = "aspect-[4/3] bg-bg relative overflow-hidden border-b border-border";
+      imgWrap.className = "aspect-[4/3] bg-white p-3.5 relative overflow-hidden border-b border-border flex items-center justify-center";
       if (item.image) {
         const img = document.createElement("img");
         img.src = item.image;
         img.alt = item.name || "Item photo";
         img.loading = "lazy";
-        img.className = "w-full h-full object-cover block group-hover:scale-105 transition-transform duration-300";
+        img.className = "max-w-full max-h-full object-contain block group-hover:scale-105 transition-transform duration-300";
         imgWrap.appendChild(img);
       } else {
-        imgWrap.classList.add("flex", "items-center", "justify-center", "text-ink-soft", "text-xs");
+        imgWrap.classList.add("text-ink-soft", "text-xs");
         imgWrap.textContent = "No photo available";
       }
 
